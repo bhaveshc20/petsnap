@@ -27,6 +27,7 @@ export default class SocialFeedScreen extends React.Component {
         return (
             <ScrollView style={styles.scrollContainer}>
                 <FlatList
+                    keyExtractor={this._keyExtractor}
                     data={SOCIAL_FEED_MOCK_DATA}
                     renderItem={({ item, index }) => (
                         <View style={styles.feedContainer}>

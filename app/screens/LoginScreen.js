@@ -58,8 +58,8 @@ export default class LoginScreen extends React.Component {
                         placeholderTextColor="white"
                         inputStyle={{ color: "white" }}
                         autoCapitalize="none"
+                        secureTextEntry={true}
                         autoCorrect={false}
-                        secureTextEntry="true"
                         keyboardType="visible-password"
                         returnKeyType="next"
                         containerStyle={styles.loginInputText}

@@ -78,7 +78,7 @@ export default class SignupScreen extends React.Component {
                         inputStyle={{ color: "white" }}
                         autoCapitalize="none"
                         autoCorrect={false}
-                        secureTextEntry="true"
+                        secureTextEntry={true}
                         keyboardType="visible-password"
                         returnKeyType="next"
                         containerStyle={styles.signupInputText}
@@ -91,29 +91,6 @@ export default class SignupScreen extends React.Component {
                                 color='#ffffff' />
                         }
                     />
-                    {/* <TextInput
-                        style={styles.signupInputText}
-                        placeholder="Name"
-                        placeholderTextColor="white"
-                        onChangeText={(nametext) => this.setState({ nametext })}
-                        value={this.state.nametext}
-                    />
-                    <TextInput
-                        style={styles.signupInputText}
-                        placeholder="Email"
-                        keyboardType="email-address"
-                        placeholderTextColor="white"
-                        onChangeText={(emailtext) => this.setState({ emailtext })}
-                        value={this.state.emailtext}
-                    />
-                    <TextInput
-                        style={styles.signupInputText}
-                        placeholder="Password"
-                        secureTextEntry="true"
-                        placeholderTextColor="white"
-                        onChangeText={(passwordtext) => this.setState({ passwordtext })}
-                        value={this.state.passwordtext}
-                    /> */}
                     <TouchableOpacity
                         style={[styles.signupButtonContainer, ifSignupNotEmpty && { backgroundColor: 'black' }]}
                         onPress={() => this.onButtonPressed(nametext, emailtext, passwordtext)}

@@ -41,7 +41,7 @@ export default class ProfileScreen extends React.Component {
                                         {
                                             width: 100,
                                             height: 100,
-                                            borderRadius: '50',
+                                            borderRadius: 50,
                                             marginTop: -30,
                                             borderWidth: 5,
                                             borderColor: 'white'
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
         height: 200,
     },
     infoContainer: {
-        height: 200,
+        flex: 1
     },
     infoInnerContainer: {
         flex:2,
@@ -134,7 +134,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: 'white',
         padding: 5,
-        marginTop:-60,
         borderWidth: 1,
         borderRadius: 5,
 
@@ -145,13 +144,13 @@ const styles = StyleSheet.create({
         color: 'black',
     },
     statsContainer: {
-        marginTop: -70,
+    
         flex: 1,
         justifyContent:'center',
         alignItems: 'center'
     },
     userInfoContainer: {
-        marginTop: -50,
+        
         paddingLeft: 25,
     },
     nameText: {

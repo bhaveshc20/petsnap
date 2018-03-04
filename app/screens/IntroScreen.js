@@ -94,12 +94,12 @@ const styles = StyleSheet.create({
     loginInputButton: {
         marginBottom: 20,
         color: 'white',
-        fontSize: 25,
+        fontSize: 14,
     },
     signupInputButton: {
         marginBottom: 20,
         color: 'white',
-        fontSize: 25,
+        fontSize: 14,
     },
 
 
