@@ -7,6 +7,15 @@ import { LinearGradient } from 'expo';
 import { Icon } from 'react-native-elements'
 
 export default class LoginScreen extends React.Component {
+    static navigationOptions = {
+        title: 'Login ',
+        headerStyle: {
+            backgroundColor: '#1cd8d2',
+            borderBottomWidth: 0,
+        },
+        headerTintColor: 'white',
+        headerTitleStyle: { color: 'white', fontSize: 20 }
+    };
     constructor(props) {
         super(props);
         this.state = {
@@ -16,7 +25,7 @@ export default class LoginScreen extends React.Component {
     }
     onButtonPressed = (usernametext, passwordtext) => {
         if (!(usernametext === '' || passwordtext === '')) {
-            this.setState({ screen: 'SocialFeedScreen' });
+            this.props.navigation.navigate('Home')
         }
         else {
             Alert.alert(

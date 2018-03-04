@@ -7,6 +7,15 @@ import { Icon } from 'react-native-elements'
 import { Ionicons, FontAwesome } from '@expo/vector-icons';
 
 export default class SignupScreen extends React.Component {
+    static navigationOptions = {
+        title: 'Signup ',
+        headerStyle: {
+            backgroundColor: '#1cd8d2',
+            borderBottomWidth: 0,
+        },
+        headerTintColor: 'white',
+        headerTitleStyle: { color: 'white', fontSize: 20 }
+    };
     constructor(props) {
         super(props);
         this.state = { 
@@ -18,7 +27,7 @@ export default class SignupScreen extends React.Component {
     }
         onButtonPressed = (nametext, passwordtext, emailtext) => {
             if (!(nametext === '' || emailtext === '' || passwordtext === '')){
-                this.setState({ screen: 'SocialFeedScreen' });
+                this.props.navigation.navigate('Home')
             }
             else {
                 Alert.alert(

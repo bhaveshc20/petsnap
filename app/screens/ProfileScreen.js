@@ -80,7 +80,7 @@ export default class ProfileScreen extends React.Component {
                 </View>
                 <View style={styles.userFeedContainer}>
                     <TouchableOpacity
-                        onPress={() => this.setState({ screen: 'IntroScreen' })}
+                        onPress={() => this.props.navigation.navigate('Intro')}
                         style={styles.logoutButton}>
                         <Text style={styles.logoutButtonText}> Log Out </Text>
                     </TouchableOpacity>

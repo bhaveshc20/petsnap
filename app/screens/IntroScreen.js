@@ -9,6 +9,9 @@ const dog_logo = require('../../assets/dog.png');
 
 
 export default class IntroScreen extends React.Component {
+    static navigationOptions = {
+        header: null
+    };
     constructor(props) {
         super(props);
         this.state = {
@@ -31,12 +34,12 @@ export default class IntroScreen extends React.Component {
                     </View>
 
                     <View style={styles.buttonContainer}>
-                        <TouchableOpacity onPress={() => this.setState({ screen: 'LoginScreen' })}
+                        <TouchableOpacity onPress={() => this.props.navigation.navigate('Login')}
                             style={styles.loginButton}
                         >
                             <Text style={styles.loginInputButton}>Login</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => this.setState({ screen: 'SignupScreen' })}
+                        <TouchableOpacity onPress={() => this.props.navigation.navigate('Signup')}
                             style={styles.signupButton}
                         >
                             <Text style={styles.signupInputButton}>Sign up</Text>

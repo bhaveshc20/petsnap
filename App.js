@@ -7,37 +7,15 @@ import IntroScreen from './app/screens/IntroScreen';
 import SocialFeedScreen from './app/screens/SocialFeedScreen';
 import ProfileScreen from './app/screens/ProfileScreen';
 
-export default class App extends React.Component {
-  constructor(props){
-    super(props);
-    this.state = {
-      screen: 'IntroScreen'
-    }
-  }
-  render() {
-    const { screen } = this.state
+import IntroStack from './app/navigation/introStack';
+import HomeTabs from './app/navigation/homeTabs';
+import RootNavigator from './app/navigation/rootNavigator';
 
-    if(screen === 'IntroScreen') {
-      return <IntroScreen />
-    }else if(screen === 'LoginScreen'){
-      return <LoginScreen />
-    } else if (screen === 'SignupScreen') {
-      return <SignupScreen />
-    } else if (screen === 'SocialFeedScreen') {
-      return <SocialFeedScreen />
-    } else if (screen === 'ProfileScreen') {
-      return <ProfileScreen />
-    }
-    
-    else{
-    {
-      return (
-        <View style={styles.container}>
-          <Text>Open up App.js to start working on your app!</Text>
-        </View>
-      )
-    }
-  }
+export default class App extends React.Component {
+  render() {
+    return(
+    <RootNavigator />
+    )
 }
 }
 
