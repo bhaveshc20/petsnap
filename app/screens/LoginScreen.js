@@ -20,8 +20,73 @@ export default class LoginScreen extends React.Component {
         super(props);
         this.state = {
             screen: 'LoginScreen',
-            usernametext: '', passwordtext: ''
+            emailtext: '', 
+            passwordtext: ''
         };
+    }
+    async loginButtonPressed() {
+        this.setState({ isLoading: true })
+
+        const { emailtext, passwordtext } = this.state
+        const { navigate } = this.props.navigation
+
+        var details = {
+            'email': emailtext,
+            'password': passwordtext
+        };
+
+        var formBody = [];
+
+        for (var property in details) {
+            var encodedKey = encodeURIComponent(property);
+            var encodedValue = encodeURIComponent(details[property]);
+
+            formBody.push(encodedKey + "=" + encodedValue);
+        }
+
+        formBody = formBody.join("&");
+
+        try {
+            let response = await fetch(`https://daug-app.herokuapp.com/auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                },
+                body: formBody
+            });
+
+            let responseJSON = null
+
+            if (response.status === 201) {
+                responseJSON = await response.json();
+
+                console.log(responseJSON)
+
+                this.setState({ isLoading: false })
+                Alert.alert(
+                    'Success',
+                    'You have successfully logged in!',
+                    [
+                        { text: "Continue", onPress: () => navigate('Home') }
+                    ],
+                    { cancelable: false }
+                )
+            } else {
+                responseJSON = await response.json();
+                const error = responseJSON.message
+
+                console.log(responseJSON)
+
+                this.setState({ isLoading: false, errors: responseJSON.errors })
+                Alert.alert('Log in failed!', `Unable to login.. ${error}!`)
+            }
+        } catch (error) {
+            this.setState({ isLoading: false, response: error })
+
+            console.log(error)
+
+            Alert.alert('Sign up failed!', 'Unable to Signup. Please try again later')
+        }
     }
     onButtonPressed = (usernametext, passwordtext) => {
         if (!(usernametext === '' || passwordtext === '')) {
@@ -83,7 +148,7 @@ export default class LoginScreen extends React.Component {
                     />
                     <TouchableOpacity
                         style={[styles.loginButtonContainer, ifLoginNotEmpty && { backgroundColor: 'black' }]}
-                        onPress={() => this.onButtonPressed(usernametext, passwordtext)}
+                        onPress={() => this.loginButtonPressed()}
                     >
                         <Text style={styles.loginInputButton}>Login</Text>
                     </TouchableOpacity>

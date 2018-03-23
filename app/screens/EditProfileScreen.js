@@ -7,10 +7,11 @@ import { Icon } from 'react-native-elements'
 
 import IntroScreen from '../../app/screens/IntroScreen';
 import { StackNavigator } from 'react-navigation';
+
 const profile = require('../../assets/profile.jpg');
 const cover = require('../../assets/cover.jpg');
 
-export default class ProfileScreen extends React.Component {
+export default class EditProfileScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -27,27 +28,21 @@ export default class ProfileScreen extends React.Component {
                 <View style={styles.coverContainer}>
                     <View style={styles.coverImageContainer}>
                         <Image
-                            source={cover}
-                            style={styles.imageCover}
-                            resizeMode="cover"
+                            source={profile}
+                            style={
+                                {
+                                    width: 140,
+                                    height: 140,
+                                    borderRadius: 70,
+                                    marginTop: 50,
+                                }}
                         />
                     </View>
-                    <View style={styles.infoContainer}>
+                    <TouchableOpacity>
+                        <Text style={{ color:'#1cd8d2' ,fontSize: 17, paddingTop: 10,}}>Change Photo</Text>
+                    </TouchableOpacity>
+                    {/* <View style={styles.infoContainer}>
                         <View style={styles.infoInnerContainer}>
-                            <View style={styles.profileImageContainer}>
-                                <Image
-                                    source={profile}
-                                    style={
-                                        {
-                                            width: 100,
-                                            height: 100,
-                                            borderRadius: 50,
-                                            marginTop: -30,
-                                            borderWidth: 5,
-                                            borderColor: 'white'
-                                        }}
-                                />
-                            </View>
                             <View style={styles.profileInfoContainer}>
                                 <View style={styles.infoStatsContainer}>
                                     <View style={styles.statsContainer}>
@@ -64,7 +59,7 @@ export default class ProfileScreen extends React.Component {
                                     </View>
                                 </View>
                                 <View style={styles.buttonContainer}>
-                                    <TouchableOpacity style={styles.editButton} onPress={() => this.props.navigation.navigate('EditProfile')}>
+                                    <TouchableOpacity style={styles.editButton}>
                                         <Text style={styles.editText}> Edit Profile </Text>
                                     </TouchableOpacity>
                                 </View>
@@ -76,7 +71,7 @@ export default class ProfileScreen extends React.Component {
                                 <Text style={styles.descText}>Yo! Wanna bhow bhow together?</Text>
                             </View>
                         </View>
-                    </View>
+                    </View> */}
                 </View>
                 <View style={styles.userFeedContainer}>
                     <TouchableOpacity
@@ -96,8 +91,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     coverContainer: {
-        backgroundColor: '#f9f9f9',
-        flex: 1,
+        backgroundColor: '#fff',
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     imageCover: {
         width: '100%',
@@ -107,7 +103,7 @@ const styles = StyleSheet.create({
         flex: 1
     },
     infoInnerContainer: {
-        flex:2,
+        flex: 2,
         flexDirection: 'row'
     },
     profileImageContainer: {
@@ -126,7 +122,7 @@ const styles = StyleSheet.create({
     buttonContainer: {
         flex: 1,
         height: 20,
-        width: 170, 
+        width: 170,
         marginLeft: 30
     },
     editButton: {
@@ -144,13 +140,13 @@ const styles = StyleSheet.create({
         color: 'black',
     },
     statsContainer: {
-    
+
         flex: 1,
-        justifyContent:'center',
+        justifyContent: 'center',
         alignItems: 'center'
     },
     userInfoContainer: {
-        
+
         paddingLeft: 25,
     },
     nameText: {
@@ -180,6 +176,6 @@ const styles = StyleSheet.create({
     }
 
 
-    
+
 
 });

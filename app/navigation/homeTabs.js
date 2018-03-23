@@ -3,14 +3,13 @@ import { Platform } from 'react-native';
 
 import { TabNavigator } from 'react-navigation';
 import { SimpleLineIcons } from '@expo/vector-icons';
-import SocialFeedScreen from '../screens/SocialFeedScreen';
 import ProfileScreen from '../screens/ProfileScreen';
-
+import socialModal from './socialModal';
 
 
 const HomeTabs = TabNavigator({
     SocialTab: {
-        screen: SocialFeedScreen,
+        screen: socialModal,
         navigationOptions: {
             tabBarLabel: 'Feed',
             tabBarIcon: ({ tintColor }) => (
