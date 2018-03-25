@@ -1,181 +1,258 @@
 import React from 'react';
-import { StyleSheet, Text, View, Dimensions, ScrollView, Image, TouchableOpacity, TextInput, Alert } from 'react-native';
-import { Button, Input } from 'react-native-elements';
-import { LinearGradient } from 'expo';
-import { Ionicons, FontAwesome } from '@expo/vector-icons';
-import { Icon } from 'react-native-elements'
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Image, SafeAreaView, KeyboardAvoidingView, Alert } from 'react-native';
+import { Button, Input, Header } from 'react-native-elements'
 
-import IntroScreen from '../../app/screens/IntroScreen';
-import { StackNavigator } from 'react-navigation';
-
-const profile = require('../../assets/profile.jpg');
-const cover = require('../../assets/cover.jpg');
 
 export default class EditProfileScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            screen: 'null',
+            isLoading: false,
+            name: 'Bhavesh',
+            bio: 'Yo sup?'
         };
     }
-    render() {
-        const { screen } = this.state
-        if (screen === 'IntroScreen') {
-            return <IntroScreen />
+
+    async DoneEditingPressed() {
+        this.setState({ isLoading: true })
+
+        const { name, bio, email, password, profileImage, bannerImage } = this.state
+        const { navigate } = this.props.navigation
+
+        var details = {
+            'name': name,
+            'bio': bio,
+        };
+
+        var formBody = [];
+
+        for (var property in details) {
+            var encodedKey = encodeURIComponent(property);
+            var encodedValue = encodeURIComponent(details[property]);
+
+            formBody.push(encodedKey + "=" + encodedValue);
         }
+
+        formBody = formBody.join("&");
+
+        try {
+            let response = await fetch(`https://daug-app.herokuapp.com/api/users/7`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                },
+                body: formBody
+            });
+
+            let responseJSON = null
+
+            if (response.status === 200) {
+                responseJSON = await response.json();
+                console.log(responseJSON)
+
+                this.setState({
+                    isLoading: false,
+                    profile: responseJSON,
+                })
+                Alert.alert(
+                    'Success!',
+                    'Your profile is updated!',
+                    [
+                        { text: "Continue", onPress: () => this.props.navigation.goBack() }
+                    ],
+                    { cancelable: false }
+                )
+            } else {
+                responseJSON = await response.json();
+                const error = responseJSON.message
+
+                console.log(responseJSON)
+
+                this.setState({ isLoading: false, errors: responseJSON.errors })
+                Alert.alert('Cannot update it!', `Empty field.. ${error}!`)
+            }
+        } catch (error) {
+            this.setState({ isLoading: false, response: error })
+
+            console.log(error)
+
+            Alert.alert('Updating failed!', 'Unable to Post. Please try again later')
+        }
+    }
+    _renderProfileName(name) {
+        if (name) {
+            return (
+                <Text>{name}</Text>
+            )
+        }
+    }
+    render() {
+        const { name, email, password, bio, isLoading, profile } = this.state
         return (
-            <View style={styles.container}>
-                <View style={styles.coverContainer}>
-                    <View style={styles.coverImageContainer}>
-                        <Image
-                            source={profile}
-                            style={
-                                {
-                                    width: 140,
-                                    height: 140,
-                                    borderRadius: 70,
-                                    marginTop: 50,
-                                }}
-                        />
-                    </View>
-                    <TouchableOpacity>
-                        <Text style={{ color:'#1cd8d2' ,fontSize: 17, paddingTop: 10,}}>Change Photo</Text>
-                    </TouchableOpacity>
-                    {/* <View style={styles.infoContainer}>
-                        <View style={styles.infoInnerContainer}>
-                            <View style={styles.profileInfoContainer}>
-                                <View style={styles.infoStatsContainer}>
-                                    <View style={styles.statsContainer}>
-                                        <Text style={styles.infoText}>1</Text>
-                                        <Text style={styles.infoText}>Posts</Text>
+            <View style={styles.profileEditContainer}>
+                <SafeAreaView style={{ backgroundColor: '#FAFAFA', }}>
+                    <Header
+                        leftComponent={
+                            <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
+                                <Text style={styles.navBar}>Cancel</Text>
+                            </TouchableOpacity>
+                        }
+                        centerComponent={{
+                            text: 'Edit Profile',
+                            style: {
+                                color: '#2F80ED', fontSize: 20,
+                                fontWeight: 'bold',
+                            }
+                        }}
+                        rightComponent={
+                            <TouchableOpacity onPress={() => this.DoneEditingPressed()}>
+                                <Text style={styles.navBar}>Done</Text>
+                            </TouchableOpacity>
+                        }
+                        outerContainerStyles={{ backgroundColor: '#FAFAFA' }}
+                    />
+                </SafeAreaView>
+                <ScrollView style={{ backgroundColor: '#fff' }}>
+                    {!isLoading &&
+                        <KeyboardAvoidingView behavior="position">
+                            <View style={styles.mainContainer}>
+                                <View style={styles.editInfoBasicContainer}>
+                                    <View style={styles.photoChangeContainer}>
+                                        <View style={styles.avatarContainer}>
+                                            <Image
+                                                style={styles.avatarImage}
+                                                source={AVATAR}
+                                            />
+                                        </View>
+                                        <View style={styles.avatarChangeButtonContainer}>
+                                            <TouchableOpacity>
+                                                <Text style={styles.avatarChangeButton}>Change Photo</Text>
+                                            </TouchableOpacity>
+                                        </View>
                                     </View>
-                                    <View style={styles.statsContainer}>
-                                        <Text style={styles.infoText}>281</Text>
-                                        <Text style={styles.infoText}>Followers</Text>
+                                    <View style={styles.detailsChangeContainer}>
+                                        <View style={styles.changeInputContainer}>
+                                            <Text style={styles.inputLabel}>Name</Text>
+                                            <Input
+                                                placeholder='Input your name'
+                                                placeholderTextColor="black"
+                                                style={styles.inputStyle}
+                                                autoCapitalize="none"
+                                                autoCorrect={false}
+                                                keyboardType="default"
+                                                returnKeyType="done"
+                                                value={name}
+                                                onChangeText={(name) => this.setState({ name })}
+                                                containerStyle={styles.inputElementsContainer}
+                                            />
+
+                                        </View>
+                                        <View style={styles.changeInputContainer}>
+                                            <Text style={styles.inputLabel}>Bio</Text>
+                                            <Input
+                                                placeholder='Short info about you'
+                                                placeholderTextColor="black"
+                                                style={styles.inputStyle}
+                                                autoCapitalize="none"
+                                                autoCorrect={true}
+                                                keyboardType="default"
+                                                returnKeyType="done"
+                                                value={bio}
+                                                onChangeText={(bio) => this.setState({ bio })}
+                                                containerStyle={styles.inputElementsContainer}
+                                            />
+                                        </View>
                                     </View>
-                                    <View style={styles.statsContainer}>
-                                        <Text style={styles.infoText}>124</Text>
-                                        <Text style={styles.infoText}>Following</Text>
-                                    </View>
+
                                 </View>
-                                <View style={styles.buttonContainer}>
-                                    <TouchableOpacity style={styles.editButton}>
-                                        <Text style={styles.editText}> Edit Profile </Text>
-                                    </TouchableOpacity>
+                                <View style={styles.editPrivateInfoContainer}>
+                                    <Text style={styles.privateInfoLabel}>Private Information</Text>
                                 </View>
                             </View>
-                        </View>
-                        <View style={styles.userProfileContainer}>
-                            <View style={styles.userInfoContainer}>
-                                <Text style={styles.nameText}>Max</Text>
-                                <Text style={styles.descText}>Yo! Wanna bhow bhow together?</Text>
-                            </View>
-                        </View>
-                    </View> */}
-                </View>
-                <View style={styles.userFeedContainer}>
-                    <TouchableOpacity
-                        onPress={() => this.props.navigation.navigate('Intro')}
-                        style={styles.logoutButton}>
-                        <Text style={styles.logoutButtonText}> Log Out </Text>
-                    </TouchableOpacity>
-                </View>
+                        </KeyboardAvoidingView>
+                    }
+                </ScrollView>
             </View>
         );
     }
 }
-
 const styles = StyleSheet.create({
-    container: {
+    profileEditContainer: {
         flex: 1,
-        backgroundColor: '#fff',
     },
-    coverContainer: {
-        backgroundColor: '#fff',
-        alignItems: 'center',
+    navBar: {
+        fontSize: 16,
+    },
+    mainContainer: {
+        flex: 1,
+    },
+    editInfoBasicContainer: {
+        flex: 1,
         justifyContent: 'center'
     },
-    imageCover: {
-        width: '100%',
-        height: 200,
-    },
-    infoContainer: {
-        flex: 1
-    },
-    infoInnerContainer: {
-        flex: 2,
-        flexDirection: 'row'
-    },
-    profileImageContainer: {
-        flex: 1,
-        marginLeft: 25,
-        marginRight: 25
-    },
-    profileInfoContainer: {
-        flex: 3,
-        flexDirection: 'column'
-    },
-    infoStatsContainer: {
-        flex: 3,
-        flexDirection: 'row'
-    },
-    buttonContainer: {
-        flex: 1,
-        height: 20,
-        width: 170,
-        marginLeft: 30
-    },
-    editButton: {
+    photoChangeContainer: {
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'white',
-        padding: 5,
-        borderWidth: 1,
-        borderRadius: 5,
-
+        paddingTop: 22,
     },
-    editText: {
-        textAlign: 'center',
-        fontSize: 16,
+    avatarContainer: {
+        height: 100,
+    },
+    avatarImage: {
+        height: 100,
+        width: 100,
+        borderRadius: 50,
+        borderWidth: 1,
+        borderColor: '#cccccc',
+    },
+    avatarChangeButtonContainer: {
+        alignItems: 'center',
+    },
+    avatarChangeButton: {
+        marginVertical: 10,
+        color: '#2F80ED',
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    detailsChangeContainer: {
+        marginBottom: 10,
+    },
+    changeInputContainer: {
+        height: 80,
+        justifyContent: 'center',
+        marginHorizontal: 20,
+        marginBottom: 20,
+    },
+    inputLabel: {
+        color: '#737373',
+    },
+    inputElementsContainer: {
+        width: '100%',
+        borderColor: '#aaaaaa'
+    },
+    inputStyle: {
+        width: '100%',
+        borderColor: '#aaaaaa',
+        fontSize: 18,
         color: 'black',
     },
-    statsContainer: {
-
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
+    bioChangeContainer: {
+        backgroundColor: '#ffc',
     },
-    userInfoContainer: {
-
-        paddingLeft: 25,
+    editPrivateInfoContainer: {
+        backgroundColor: '#aaaaaa',
     },
-    nameText: {
-        fontWeight: '700',
-        fontSize: 20,
-        marginBottom: 5
-    },
-    descText: {
-        fontSize: 16,
-    },
-    userFeedContainer: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    logoutButton: {
-        width: 170,
+    editPrivateInfoContainer: {
         height: 50,
-        borderRadius: 5,
-        backgroundColor: '#33ACE9',
+        alignItems: 'flex-start',
         justifyContent: 'center',
-        alignItems: 'center'
+        borderColor: '#d9d9d9',
+        borderBottomWidth: 1,
+
     },
-    logoutButtonText: {
-        fontSize: 20,
-        color: 'white'
+    privateInfoLabel: {
+        color: '#737373',
+        marginHorizontal: 20,
+        fontSize: 15,
     }
-
-
-
-
 });

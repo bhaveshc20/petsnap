@@ -7,12 +7,10 @@ import { Ionicons, FontAwesome } from '@expo/vector-icons';
 import { Icon } from 'react-native-elements'
 
 import { StackNavigator } from 'react-navigation';
-
-import { SOCIAL_FEED_MOCK_DATA } from '../utils/constant';
 import { FlatList } from 'react-native-gesture-handler';
 
 export default class SocialFeedScreen extends React.Component {
-    static navigationOptions = {
+    static navigationOptions = ({navigation}) => ({
         title: 'Daug ',
         headerStyle: {
             backgroundColor: 'white',
@@ -20,13 +18,12 @@ export default class SocialFeedScreen extends React.Component {
         },
         headerTintColor: '#1cd8d2',
         headerTitleStyle: { color: '#1cd8d2', fontSize: 25 }
-    };
+    });
     constructor(props) {
         super(props);
         this.state = {
             isLoading: false,
             posts: null,
-            screen: 'SocialFeedScreen',
         };
     }
 
@@ -51,7 +48,9 @@ export default class SocialFeedScreen extends React.Component {
 
                 console.log(responseJSON)
 
-                this.setState({ isLoading: false, posts: responseJSON });
+                this.setState({ 
+                    isLoading: false, 
+                    posts: responseJSON });
             } else {
                 responseJSON = await response.json();
                 const error = responseJSON.message
@@ -102,16 +101,16 @@ export default class SocialFeedScreen extends React.Component {
             )
         }
     }
-    onNamePressed = () => {
-        onPress = this.setState({ screen: 'ProfileScreen' });
-    }
+    // onNamePressed = () => {
+    //     onPress = this.setState({ screen: 'ProfileScreen' });
+    // }
     _membersList(member) {
         const { isLoading, posts, user } = this.state;
         return (
             <View style={styles.feedContainer} key={member}>
                 <View style={styles.userContainer}>
                     {this._renderProfileImage(member.user["profile_image"])}
-                    <TouchableOpacity style={styles.usernameContainer} onPress={() => this.props.navigation.navigate('Profile', { user: member.user })}>
+                    <TouchableOpacity style={styles.usernameContainer} onPress={() => this.props.navigation.navigate('Profile', { isHeaderShow: true, user: member.user })}>
                         <Text style={styles.usernametext}>{member.user.name}</Text>
                         <Text style={styles.locationtext}>{member.location}</Text>
                     </TouchableOpacity>
@@ -148,10 +147,7 @@ export default class SocialFeedScreen extends React.Component {
         )
     }
     render() {
-        const { screen, isLoading, posts, user } = this.state;
-        if (screen === 'ProfileScreen') {
-            return <ProfileScreen />
-        }
+        const { isLoading, posts, user } = this.state;
         return (
             <ScrollView style={styles.scrollContainer}>
                 <View style={styles.buttonContainer}>

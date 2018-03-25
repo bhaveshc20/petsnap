@@ -12,4 +12,10 @@ export default StackNavigator({
     PostDetail: {
         screen: PostScreen,
     },
+    Profile: {
+        screen: ProfileScreen,
+    }
+},
+{
+    initialRouteName: 'SocialFeed'
 });

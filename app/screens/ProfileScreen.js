@@ -4,54 +4,143 @@ import { Button, Input } from 'react-native-elements';
 import { LinearGradient } from 'expo';
 import { Ionicons, FontAwesome } from '@expo/vector-icons';
 import { Icon } from 'react-native-elements'
-
+import EditProfileScreen from '../../app/screens/EditProfileScreen';
 import IntroScreen from '../../app/screens/IntroScreen';
 import { StackNavigator } from 'react-navigation';
-const profile = require('../../assets/profile.jpg');
-const cover = require('../../assets/cover.jpg');
 
 export default class ProfileScreen extends React.Component {
+    static navigationOptions = ({ navigation }) => {
+        return {
+        title: 'Profile ',
+        headerStyle: {
+            backgroundColor: 'white',
+            borderBottomWidth: 0,
+        },
+        headerTintColor: '#1cd8d2',
+        headerTitleStyle: { color: '#1cd8d2', fontSize: 25 }
+    }
+};
     constructor(props) {
         super(props);
+
+        const user = props.navigation.state.params && props.navigation.state.params.user
+        const isHeaderShow = props.navigation.state.params && props.navigation.state.params.isHeaderShow
+
         this.state = {
-            screen: 'null',
+            user: user || null,
+            isHeaderShow: isHeaderShow || false
         };
     }
-    render() {
-        const { screen } = this.state
-        if (screen === 'IntroScreen') {
-            return <IntroScreen />
+
+    componentDidMount() {
+        this.fetchPosts()
+    }
+
+    async fetchPosts() {
+
+        try {
+            let response = await fetch(`https://daug-app.herokuapp.com/api/users/1`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                },
+            });
+
+            let responseJSON = null
+
+            if (response.status === 200) {
+                responseJSON = await response.json();
+
+                console.log(responseJSON)
+
+                this.setState({ isLoading: false, profile: responseJSON });
+            } else {
+                responseJSON = await response.json();
+                const error = responseJSON.message
+
+                console.log(responseJSON)
+
+                this.setState({ isLoading: false, errors: responseJSON.errors })
+                Alert.alert('failed!', `Unable to load profile.. ${error}!`)
+            }
+        } catch (error) {
+            this.setState({ isLoading: false, response: error })
+
+            console.log(error)
+
+            Alert.alert('failed ', 'Please try again later')
         }
+    }
+
+    _renderBanner = (image) => {
+        if(image){
+            return(
+                <Image
+                    source={{ uri: image }}
+                    style={styles.imageCover}
+                    resizeMode="cover"
+                />
+            )
+        }
+        else{
+            return(
+                <View
+                    style={styles.defaultCover}
+                />
+            )
+        }
+    }
+
+    _renderProfileImage = (image) => {
+        if (image) {
+            return (
+                <Image
+                    source={{ uri: image }}
+                    style={{
+                        width: 100,
+                        height: 100,
+                        borderRadius: 50,
+                        marginTop: -30,
+                        borderWidth: 5,
+                        borderColor: 'white'
+                    }}
+                />
+            )
+        }
+    }
+    _renderName(name) {
+        if (name) {
+            return (
+                <Text style={styles.nameText}>{name}</Text>
+            )
+        }
+    }
+    _renderBio(bio) {
+        if (bio) {
+            return (
+                <Text style={styles.descText}>{bio}</Text>
+            )
+        }
+    }
+
+    render() {
+        const { isLoading, profile, user } = this.state
+        console.log(profile);
         return (
             <View style={styles.container}>
                 <View style={styles.coverContainer}>
                     <View style={styles.coverImageContainer}>
-                        <Image
-                            source={cover}
-                            style={styles.imageCover}
-                            resizeMode="cover"
-                        />
+                        {this._renderBanner(profile && profile.banner_image)}
                     </View>
                     <View style={styles.infoContainer}>
                         <View style={styles.infoInnerContainer}>
                             <View style={styles.profileImageContainer}>
-                                <Image
-                                    source={profile}
-                                    style={
-                                        {
-                                            width: 100,
-                                            height: 100,
-                                            borderRadius: 50,
-                                            marginTop: -30,
-                                            borderWidth: 5,
-                                            borderColor: 'white'
-                                        }}
-                                />
+                                {this._renderProfileImage(profile && profile.profile_image)}
                             </View>
                             <View style={styles.profileInfoContainer}>
                                 <View style={styles.infoStatsContainer}>
                                     <View style={styles.statsContainer}>
-                                        <Text style={styles.infoText}>1</Text>
+                                        {/* <Text style={styles.infoText}>{profile.posts.length}</Text> */}
                                         <Text style={styles.infoText}>Posts</Text>
                                     </View>
                                     <View style={styles.statsContainer}>
@@ -64,7 +153,7 @@ export default class ProfileScreen extends React.Component {
                                     </View>
                                 </View>
                                 <View style={styles.buttonContainer}>
-                                    <TouchableOpacity style={styles.editButton} onPress={() => this.props.navigation.navigate('EditProfile')}>
+                                    <TouchableOpacity style={styles.editButton} onPress={() => this.props.navigation.navigate('EditProfile', { user })}>
                                         <Text style={styles.editText}> Edit Profile </Text>
                                     </TouchableOpacity>
                                 </View>
@@ -72,8 +161,8 @@ export default class ProfileScreen extends React.Component {
                         </View>
                         <View style={styles.userProfileContainer}>
                             <View style={styles.userInfoContainer}>
-                                <Text style={styles.nameText}>Max</Text>
-                                <Text style={styles.descText}>Yo! Wanna bhow bhow together?</Text>
+                                {this._renderName(profile && profile.name)}
+                                {this._renderBio(profile && profile.bio)}
                             </View>
                         </View>
                     </View>
@@ -114,6 +203,11 @@ const styles = StyleSheet.create({
         flex: 1,
         marginLeft: 25,
         marginRight: 25
+    },
+    defaultCover: {
+        backgroundColor: '#1cd8d2',
+        height: 200,
+        width: '100%'
     },
     profileInfoContainer: {
         flex: 3,

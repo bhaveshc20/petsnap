@@ -1,6 +1,7 @@
 import { StackNavigator } from 'react-navigation';
 import ProfileScreen from '../screens/ProfileScreen';
 import PostScreen from '../screens/PostScreen';
+import EditProfileScreen from '../screens/EditProfileScreen';
 
 export default StackNavigator({
     Profile: {
@@ -10,7 +11,9 @@ export default StackNavigator({
         screen: PostScreen,
     },
     EditProfile: {
-        screen: ProfileScreen
-    }
-
+        screen: EditProfileScreen,
+    },
+},
+{
+    initialRouteName: 'Profile'
 });

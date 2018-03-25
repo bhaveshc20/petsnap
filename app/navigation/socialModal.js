@@ -5,14 +5,14 @@ import CreatePostScreen from '../screens/CreatePostScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
 
 export default StackNavigator({
-    SocialFeed: {
+    socialFeedStack: {
         screen: socialFeedStack,
     },
     CreatePost: {
         screen: CreatePostScreen,
     },
 }, {
-        initialRouteName: 'SocialFeed',
+        initialRouteName: 'socialFeedStack',
         mode: 'modal',
         headerMode: 'none'
     });

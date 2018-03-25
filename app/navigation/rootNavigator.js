@@ -14,7 +14,7 @@ export default StackNavigator({
         screen: HomeTabs
     },
 }, {
-        initialRouteName: 'Home',
+        initialRouteName: 'Intro',
         mode: 'modal',
         headerMode: 'none'
     });

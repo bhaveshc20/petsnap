@@ -20,19 +20,19 @@ export default class LoginScreen extends React.Component {
         super(props);
         this.state = {
             screen: 'LoginScreen',
-            emailtext: '', 
-            passwordtext: ''
+            email: '', 
+            password: ''
         };
     }
     async loginButtonPressed() {
         this.setState({ isLoading: true })
 
-        const { emailtext, passwordtext } = this.state
+        const { email, password } = this.state
         const { navigate } = this.props.navigation
 
         var details = {
-            'email': emailtext,
-            'password': passwordtext
+            'email': email,
+            'password': password
         };
 
         var formBody = [];
@@ -88,24 +88,10 @@ export default class LoginScreen extends React.Component {
             Alert.alert('Sign up failed!', 'Unable to Signup. Please try again later')
         }
     }
-    onButtonPressed = (usernametext, passwordtext) => {
-        if (!(usernametext === '' || passwordtext === '')) {
-            this.props.navigation.navigate('Home')
-        }
-        else {
-            Alert.alert(
-                'Error',
-                'Please try again'
-            );
-        }
-    }
 
     render() {
-        const { screen, usernametext, passwordtext } = this.state;
-        const ifLoginNotEmpty = !(usernametext === '' || passwordtext === '');
-        if (screen === 'SocialFeedScreen') {
-            return <SocialFeedScreen />
-        }
+        const { screen, email, password } = this.state;
+        const ifLoginNotEmpty = !(email === '' || password === '');
         return (
             <LinearGradient colors={['#1cd8d2', '#93edc7']} style={styles.container}>
                 <View style={styles.loginInputContainer}>
@@ -118,9 +104,8 @@ export default class LoginScreen extends React.Component {
                         keyboardType="email-address"
                         returnKeyType="next"
                         containerStyle={styles.loginInputText}
-                        onChangeText={(text) => this.setState({ usernametext: text })}
-                        value={this.state.usernametext}
-                        //shake={true}
+                        onChangeText={(email) => this.setState({ email })}
+                        value={email}
                         leftIcon={
                             <Icon
                                 name='email'
@@ -137,9 +122,11 @@ export default class LoginScreen extends React.Component {
                         keyboardType="visible-password"
                         returnKeyType="next"
                         containerStyle={styles.loginInputText}
-                        onChangeText={(text) => this.setState({ passwordtext: text })}
-                        value={this.state.passwordtext}
-                        //shake={true}
+                        onChangeText={(password) => this.setState({ password })}
+                        value={password}
+                        onSubmitEditing={() => {
+                            this.loginButtonPressed()
+                        }}
                         leftIcon={
                             <Icon
                                 name='lock'

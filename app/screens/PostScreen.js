@@ -12,7 +12,7 @@ import { POST_DETAILS_MOCK_DATA } from '../utils/comments';
 import { FlatList } from 'react-native-gesture-handler';
 
 export default class PostScreen extends React.Component {
-    static navigationOptions = {
+    static navigationOptions = ({ navigation }) => ({
         title: 'Post ',
         headerStyle: {
             backgroundColor: 'white',
@@ -20,17 +20,13 @@ export default class PostScreen extends React.Component {
         },
         headerTintColor: '#1cd8d2',
         headerTitleStyle: { color: '#1cd8d2', fontSize: 25 }
-    };
+    });
     constructor(props) {
         super(props);
         const { member } = props.navigation.state.params
         this.state = {
-            screen: 'PostScreen',
             member: member
         };
-    }
-    onNamePressed = () => {
-        onPress = this.setState({ screen: 'ProfileScreen' });
     }
     membersComment(comment) {
         return (
@@ -54,11 +50,7 @@ export default class PostScreen extends React.Component {
         )
     }
     render() {
-        const { screen } = this.state;
         const {member} = this.state;
-        if (screen === 'ProfileScreen') {
-            return <ProfileScreen />
-        }
         return (
             <ScrollView style={styles.scrollContainer}>
             <View style={styles.feedContainer} key={member}>
@@ -94,9 +86,9 @@ export default class PostScreen extends React.Component {
                 </View>
                 <View style={styles.commentContainer}>
                 <FlatList
-                    keyExtractor={(item, index) => index}
                     data={POST_DETAILS_MOCK_DATA}
-                    renderItem={({ item, index }) => this.membersComment(item)}
+                    keyExtractor={(item, index) => index}
+                    renderItem={({ item }) => this.membersComment(item)}
                 />
                 </View>
             </ScrollView>

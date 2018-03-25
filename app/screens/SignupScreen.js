@@ -20,21 +20,21 @@ export default class SignupScreen extends React.Component {
         super(props);
         this.state = { 
             screen: 'SignupScreen',
-            nametext: '', 
-            emailtext: '',
-            passwordtext: '' 
+            name: '', 
+            email: '',
+            password: '' 
         };
     }
     async signupButtonPressed() {
         this.setState({ isLoading: true })
 
-        const { nametext, emailtext, passwordtext } = this.state
+        const { name, email, password } = this.state
         const { navigate } = this.props.navigation
 
         var details = {
-            'name': nametext,
-            'email': emailtext,
-            'password': passwordtext
+            'name': name,
+            'email': email,
+            'password': password
         };
 
         var formBody = [];
@@ -91,8 +91,8 @@ export default class SignupScreen extends React.Component {
         }
     }
         onButtonPressed = () => {
-            const { nametext, passwordtext, emailtext } = this.state;
-            if (!(nametext === '' || emailtext === '' || passwordtext === '')){
+            const { name, password, email } = this.state;
+            if (!(name === '' || email === '' || password === '')){
                 this.props.navigation.navigate('Home')
             }
             else {
@@ -103,11 +103,8 @@ export default class SignupScreen extends React.Component {
             }
         }
     render() {
-        const { screen, nametext, passwordtext, emailtext } = this.state;
-        const ifSignupNotEmpty = !(nametext === '' || emailtext === '' || passwordtext === '')
-        if (screen === 'SocialFeedScreen') {
-            return <SocialFeedScreen />
-        }
+        const { screen, name, password, email } = this.state;
+        const ifSignupNotEmpty = !(name === '' || email === '' || password === '')
         return (
             <LinearGradient colors={['#1cd8d2', '#93edc7']} style={styles.container}>
                 <View style={styles.signupInputContainer}>
@@ -119,9 +116,8 @@ export default class SignupScreen extends React.Component {
                         autoCorrect={false}
                         returnKeyType="next"
                         containerStyle={styles.signupInputText}
-                        onChangeText={(text) => this.setState({ nametext: text })}
-                        value={this.state.nametext}
-                        //shake={true}
+                        onChangeText={(name) => this.setState({ name })}
+                        value={name}
                         leftIcon={
                             <FontAwesome
                                 name='user'
@@ -138,8 +134,8 @@ export default class SignupScreen extends React.Component {
                         keyboardType="email-address"
                         returnKeyType="next"
                         containerStyle={styles.signupInputText}
-                        onChangeText={(text) => this.setState({ emailtext: text })}
-                        value={this.state.emailtext}
+                        onChangeText={(email) => this.setState({ email })}
+                        value={email}
                         //shake={true}
                         leftIcon={
                             <Icon
@@ -157,8 +153,8 @@ export default class SignupScreen extends React.Component {
                         keyboardType="visible-password"
                         returnKeyType="next"
                         containerStyle={styles.signupInputText}
-                        onChangeText={(text) => this.setState({ passwordtext: text })}
-                        value={this.state.passwordtext}
+                        onChangeText={(password) => this.setState({ password })}
+                        value={password}
                         //shake={true}
                         leftIcon={
                             <Icon
