@@ -1,9 +1,22 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Image, SafeAreaView, KeyboardAvoidingView, Alert } from 'react-native';
 import { Button, Input, Header } from 'react-native-elements'
+import { LinearGradient } from 'expo';
+import { Ionicons, FontAwesome } from '@expo/vector-icons';
+import { Icon } from 'react-native-elements'
+import { StackNavigator } from 'react-navigation';
 
 
 export default class EditProfileScreen extends React.Component {
+    static navigationOptions = {
+        title: 'Edit post ',
+        headerStyle: {
+            backgroundColor: '#1cd8d2',
+            borderBottomWidth: 0,
+        },
+        headerTintColor: 'white',
+        headerTitleStyle: { color: 'white', fontSize: 20 }
+    };
     constructor(props) {
         super(props);
         this.state = {
@@ -121,7 +134,7 @@ export default class EditProfileScreen extends React.Component {
                                         <View style={styles.avatarContainer}>
                                             <Image
                                                 style={styles.avatarImage}
-                                                source={AVATAR}
+                                                // source={AVATAR}
                                             />
                                         </View>
                                         <View style={styles.avatarChangeButtonContainer}>

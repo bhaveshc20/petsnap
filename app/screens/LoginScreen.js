@@ -5,6 +5,7 @@ import { Button, Input } from 'react-native-elements';
 // import { MaterialCommunityIcons, SimpleLineIcons } from 'expo/vector-icons';
 import { LinearGradient } from 'expo';
 import { Icon } from 'react-native-elements'
+import { onSignIn } from "../utils/auth";
 
 export default class LoginScreen extends React.Component {
     static navigationOptions = {
@@ -19,7 +20,7 @@ export default class LoginScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            screen: 'LoginScreen',
+            checkLogin: false,
             email: '', 
             password: ''
         };
@@ -27,7 +28,7 @@ export default class LoginScreen extends React.Component {
     async loginButtonPressed() {
         this.setState({ isLoading: true })
 
-        const { email, password } = this.state
+        const { email, password, checkLogin } = this.state
         const { navigate } = this.props.navigation
 
         var details = {
@@ -67,7 +68,7 @@ export default class LoginScreen extends React.Component {
                     'Success',
                     'You have successfully logged in!',
                     [
-                        { text: "Continue", onPress: () => navigate('Home') }
+                        { text: "Continue", onPress: () => onSignIn(responseJSON.user.id).then(() => navigate('Home')) }
                     ],
                     { cancelable: false }
                 )
@@ -90,7 +91,7 @@ export default class LoginScreen extends React.Component {
     }
 
     render() {
-        const { screen, email, password } = this.state;
+        const { email, password } = this.state;
         const ifLoginNotEmpty = !(email === '' || password === '');
         return (
             <LinearGradient colors={['#1cd8d2', '#93edc7']} style={styles.container}>

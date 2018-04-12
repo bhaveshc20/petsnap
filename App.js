@@ -6,6 +6,7 @@ import LoginScreen from './app/screens/LoginScreen';
 import IntroScreen from './app/screens/IntroScreen';
 import SocialFeedScreen from './app/screens/SocialFeedScreen';
 import ProfileScreen from './app/screens/ProfileScreen';
+import EditProfileScreen from './app/screens/EditProfileScreen';
 
 import IntroStack from './app/navigation/introStack';
 import HomeTabs from './app/navigation/homeTabs';

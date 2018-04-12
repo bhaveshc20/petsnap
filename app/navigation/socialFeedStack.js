@@ -9,7 +9,7 @@ export default StackNavigator({
     SocialFeed: {
         screen: SocialFeedScreen,
     },
-    PostDetail: {
+    Post: {
         screen: PostScreen,
     },
     Profile: {

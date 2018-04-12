@@ -3,7 +3,7 @@ import { Platform } from 'react-native';
 
 import { TabNavigator } from 'react-navigation';
 import { SimpleLineIcons } from '@expo/vector-icons';
-import ProfileScreen from '../screens/ProfileScreen';
+import profileNavigator from './profileNavigator'
 import socialModal from './socialModal';
 
 
@@ -22,7 +22,7 @@ const HomeTabs = TabNavigator({
         }
     },
     ProfileTab: {
-        screen: ProfileScreen,
+        screen: profileNavigator,
         navigationOptions: {
             tabBarLabel: 'Profile',
             tabBarIcon: ({ tintColor }) => (

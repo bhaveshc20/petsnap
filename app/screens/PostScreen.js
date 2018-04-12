@@ -6,7 +6,7 @@ import { LinearGradient } from 'expo';
 import { Ionicons, FontAwesome } from '@expo/vector-icons';
 import { Icon } from 'react-native-elements'
 
-import { StackNavigator } from 'react-navigation';
+import { ENV_URL, getUserId } from '../utils/auth';
 
 import { POST_DETAILS_MOCK_DATA } from '../utils/comments';
 import { FlatList } from 'react-native-gesture-handler';
@@ -23,17 +23,130 @@ export default class PostScreen extends React.Component {
     });
     constructor(props) {
         super(props);
-        const { member } = props.navigation.state.params
+        const postId = props.navigation.state.params && props.navigation.state.params.postId
         this.state = {
-            member: member
+            postId: postId || null,
+            member: null,
+            comment: null
         };
     }
-    membersComment(comment) {
+    async componentWillMount() {
+        const { postId } = this.state
+
+        if (postId === null) {
+            Alert.alert(
+                'Unable to display Post!',
+                'Please try again later',
+                [
+                    {
+                        text: "OK", onPress: () => {
+                            this.props.navigation.goBack()
+                        }
+                    }
+                ],
+                { cancelable: false }
+            )
+        } else {
+            this.fetchPosts()
+        }
+
+        getUserId()
+            .then(res => {
+                this.setState({ userId: res })
+                this.fetchUser()
+            })
+            .catch(err => {
+                alert("An error occurred")
+            });
+
+        this.setState({ fontLoaded: true });
+    }
+
+
+    async fetchPosts() {
+        this.setState({ isLoading: true })
+        const { postId } = this.state;
+
+        try {
+            let response = await fetch(`${ENV_URL}/api/posts/${postId}`, {
+                method: 'GET',
+            });
+
+            let responseJSON = null
+
+            if (response.status === 200) {
+                responseJSON = await response.json();
+
+                console.log(responseJSON)
+
+                this.setState({
+                    isLoading: false,
+                    member: responseJSON
+                });
+            } else {
+                responseJSON = await response.json();
+                const error = responseJSON.message
+
+                console.log(responseJSON)
+
+                this.setState({ isLoading: false, errors: responseJSON.errors })
+                Alert.alert('failed!', `Unable to load posts.. ${error}!`)
+            }
+        } catch (error) {
+            this.setState({ isLoading: false, response: error })
+
+            console.log(error)
+
+            Alert.alert('failed ', 'Please try again later')
+        }
+    }
+
+    async fetchUser() {
+        this.setState({ isLoading: true });
+
+        try {
+            let response = await fetch(`${ENV_URL}/api/users/${this.state.userId}`, {
+                method: 'GET'
+            });
+
+            let responseJSON = null
+
+            if (response.status === 200) {
+                responseJSON = await response.json();
+
+                console.log(responseJSON);
+
+                this.setState({ user: responseJSON, isLoading: false })
+            } else {
+                responseJSON = await response.json();
+                const error = responseJSON.message
+
+                console.log("failed" + error);
+            }
+        } catch (error) {
+            console.log("failed" + error);
+        }
+    }
+
+    _renderPostImage = (image) => {
+        if (image) {
+            return (
+                <Image
+                    source={{ uri: image }}
+                    style={styles.feedImage}
+                />
+            )
+        }
+    }
+
+    displayComments(comment, index) {
+        const {navigate} = this.props.navigation
         return (
-            <View style={styles.commentContainer} key={comment}>
+            <View style={styles.commentContainer} key={index}>
                 <View style={styles.userCommentContainer}>
+                    <TouchableOpacity onPress={() => this.props.navigation.navigate('Profile', (comment.user.id == this.state.userId) ? { isHeaderShow: false, userId: comment.user.id } : { isHeaderShow: true, userId: comment.user.id })}>
                     <Image
-                        source={{ uri: comment.user.image }}
+                        source={{ uri: comment.user.profile_image }}
                         style={
                             {
                                 width: 60,
@@ -41,13 +154,18 @@ export default class PostScreen extends React.Component {
                                 borderRadius: 30
                             }}
                     />
-                    <TouchableOpacity style={styles.usernameCommentContainer} onPress={this.onNamePressed}>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.usernameCommentContainer} onPress = {() => navigate('Profile', { userId: comment.user.id })}>>
                         <Text style={styles.usernameCommenttext}>{comment.user.name}</Text>
-                        <Text style={styles.locationCommenttext}>{comment.content}</Text>
+                        <Text style={styles.locationCommenttext}>{comment.description}</Text>
                     </TouchableOpacity>
                 </View>
             </View>
         )
+    }
+
+    renderComments(){
+        const {comments} = this.state;
     }
     render() {
         const {member} = this.state;
@@ -56,9 +174,7 @@ export default class PostScreen extends React.Component {
             <View style={styles.feedContainer} key={member}>
                 <View style={styles.feedImageContainer}>
                     <TouchableOpacity>
-                        <Image
-                            source={{ uri: member.post.image }}
-                            style={styles.feedImage}></Image>
+                        {this._renderPostImage(member.user["profile_image"])}
                     </TouchableOpacity>
                 </View>
                 <View style={styles.buttonContainer}>

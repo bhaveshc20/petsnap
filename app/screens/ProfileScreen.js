@@ -9,8 +9,7 @@ import IntroScreen from '../../app/screens/IntroScreen';
 import { StackNavigator } from 'react-navigation';
 
 export default class ProfileScreen extends React.Component {
-    static navigationOptions = ({ navigation }) => {
-        return {
+    static navigationOptions = {
         title: 'Profile ',
         headerStyle: {
             backgroundColor: 'white',
@@ -18,7 +17,6 @@ export default class ProfileScreen extends React.Component {
         },
         headerTintColor: '#1cd8d2',
         headerTitleStyle: { color: '#1cd8d2', fontSize: 25 }
-    }
 };
     constructor(props) {
         super(props);
@@ -153,7 +151,9 @@ export default class ProfileScreen extends React.Component {
                                     </View>
                                 </View>
                                 <View style={styles.buttonContainer}>
-                                    <TouchableOpacity style={styles.editButton} onPress={() => this.props.navigation.navigate('EditProfile', { user })}>
+                                    <TouchableOpacity
+                                        onPress={() => this.props.navigation.navigate('EditProfile')}
+                                        style={styles.editButton} >
                                         <Text style={styles.editText}> Edit Profile </Text>
                                     </TouchableOpacity>
                                 </View>

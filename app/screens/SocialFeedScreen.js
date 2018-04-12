@@ -1,16 +1,18 @@
 import React from 'react';
-import { StyleSheet, Text, View, Dimensions, ScrollView, Image, TouchableOpacity, TextInput, Alert } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, ScrollView, Image, ActivityIndicator, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { Button, Input } from 'react-native-elements';
 import ProfileScreen from '../../app/screens/ProfileScreen';
 import { LinearGradient } from 'expo';
 import { Ionicons, FontAwesome } from '@expo/vector-icons';
+// import { Provider } from 'react-redux'
+import { ENV_URL, getUserId } from '../utils/auth';
 import { Icon } from 'react-native-elements'
 
 import { StackNavigator } from 'react-navigation';
 import { FlatList } from 'react-native-gesture-handler';
 
 export default class SocialFeedScreen extends React.Component {
-    static navigationOptions = ({navigation}) => ({
+    static navigationOptions = ({ navigation }) => ({
         title: 'Daug ',
         headerStyle: {
             backgroundColor: 'white',
@@ -24,17 +26,27 @@ export default class SocialFeedScreen extends React.Component {
         this.state = {
             isLoading: false,
             posts: null,
+            postId: null
         };
     }
 
     componentDidMount() {
         this.fetchPosts()
+        getUserId()
+            .then(res => {
+                this.setState({ userId: res })
+                this.fetchUser()
+            })
+            .catch(err => {
+                alert("An error occurred")
+            });
     }
 
     async fetchPosts() {
-
+        this.setState({ isLoading: true });
+        const { postId } = this.state
         try {
-            let response = await fetch(`https://daug-app.herokuapp.com/api/feed`, {
+            let response = await fetch(`${ENV_URL}/api/feed`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
@@ -48,9 +60,10 @@ export default class SocialFeedScreen extends React.Component {
 
                 console.log(responseJSON)
 
-                this.setState({ 
-                    isLoading: false, 
-                    posts: responseJSON });
+                this.setState({
+                    isLoading: false,
+                    posts: responseJSON
+                });
             } else {
                 responseJSON = await response.json();
                 const error = responseJSON.message
@@ -69,17 +82,52 @@ export default class SocialFeedScreen extends React.Component {
         }
     }
 
+    async fetchUser() {
+        this.setState({ isLoading: true });
+
+        try {
+            let response = await fetch(`${ENV_URL}/api/users/${this.state.userId}`, {
+                method: 'GET'
+            });
+
+            let responseJSON = null
+
+            if (response.status === 200) {
+                responseJSON = await response.json();
+
+                console.log(responseJSON);
+
+                this.setState({ user: responseJSON, isLoading: false })
+            } else {
+                responseJSON = await response.json();
+                const error = responseJSON.message
+
+                console.log("failed" + error);
+            }
+        } catch (error) {
+            console.log("failed" + error);
+        }
+    }
+
     _renderProfileImage = (image) => {
         if (image) {
             return (
-                    <Image
-                        source={{ uri: image }}
-                        style={{
-                            width: 60,
-                            height: 60,
-                            borderRadius: 30,
-                        }}
-                    />
+                <Image
+                    source={{ uri: image }}
+                    style={{
+                        width: 60,
+                        height: 60,
+                        borderRadius: 30,
+                    }}
+                />
+            )
+        }
+        else {
+            return (
+                <View
+                    style={styles.defaultProfileAvatar}
+                >
+                </View>
             )
         }
     }
@@ -89,11 +137,12 @@ export default class SocialFeedScreen extends React.Component {
                 <Image
                     source={{ uri: image }}
                     style={styles.feedImage}
+                    resizeMode="cover"
                 />
             )
         }
     }
-    
+
     _renderPostCaption = (description) => {
         if (description) {
             return (
@@ -101,40 +150,49 @@ export default class SocialFeedScreen extends React.Component {
             )
         }
     }
-    // onNamePressed = () => {
-    //     onPress = this.setState({ screen: 'ProfileScreen' });
-    // }
+
     _membersList(member) {
-        const { isLoading, posts, user } = this.state;
+        const { user } = this.state;
         return (
             <View style={styles.feedContainer} key={member}>
                 <View style={styles.userContainer}>
-                    {this._renderProfileImage(member.user["profile_image"])}
-                    <TouchableOpacity style={styles.usernameContainer} onPress={() => this.props.navigation.navigate('Profile', { isHeaderShow: true, user: member.user })}>
-                        <Text style={styles.usernametext}>{member.user.name}</Text>
-                        <Text style={styles.locationtext}>{member.location}</Text>
+                    <TouchableOpacity style={styles.usernameContainer}
+                        onPress={() => this.props.navigation.navigate('Profile', (member.user.id == this.state.userId) ? { isHeaderShow: false, userId: member.user.id } : { isHeaderShow: true, userId: member.user.id })}>
+                        {this._renderProfileImage(member.user["profile_image"])}
                     </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => this.props.navigation.navigate('Profile', (member.user.id == this.state.userId) ? { isHeaderShow: false, userId: member.user.id } : { isHeaderShow: true, userId: member.user.id })}
+                    >
+                        <Text style={styles.usernametext}>{member.user.name}</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.locationtext}>{member.location}</Text>
                 </View>
                 <View style={styles.feedImageContainer}>
                     <TouchableOpacity onPress={() =>
-                        this.props.navigation.navigate('PostDetail', { post: member })
+                        this.props.navigation.navigate('Post', { postId: member.id })
                     }>
-                    {this._renderFeedImage(member["image"])}
+                        {this._renderFeedImage(member["image"])}
+                        <View style={styles.feedInfoContainer}>
+                            {this._renderPostCaption(member["description"])}
+                        </View>
                     </TouchableOpacity>
-                    <View style={styles.feedInfoContainer}>
-                        {this._renderPostCaption(member["description"])}
-                    </View>
+                    
                 </View>
                 <View style={styles.buttonContainer}>
                     {/* <Text>{member.post.date}</Text> */}
                     <View style={styles.iconContainer}>
+                        <TouchableOpacity onPress={() =>
+                            this.props.navigation.navigate('Post', { postId: member.id })
+                        }
+                        >
                         <FontAwesome
                             name='comment-o'
                             color='#000'
                             size={20}
                             style={{ paddingRight: 5 }}
                         />
-                        <Text style={styles.iconNumber}>10</Text>
+                        <Text style={styles.iconNumber}>{member.comments.length}</Text>
+                        </TouchableOpacity>
                         <FontAwesome
                             name='heart-o'
                             size={20}
@@ -147,11 +205,11 @@ export default class SocialFeedScreen extends React.Component {
         )
     }
     render() {
-        const { isLoading, posts, user } = this.state;
+        const { isLoading, posts, user, postId } = this.state;
         return (
             <ScrollView style={styles.scrollContainer}>
                 <View style={styles.buttonContainer}>
-                    <TouchableOpacity onPress={() => this.props.navigation.navigate('CreatePost')}>
+                    <TouchableOpacity onPress={() => this.props.navigation.navigate('CreatePost', { member: user })}>
                         <Text style={{ fontSize: 17, color: '#1cd8d2' }}>Create post</Text>
                     </TouchableOpacity>
                     <View style={styles.iconContainer}>
@@ -171,9 +229,11 @@ export default class SocialFeedScreen extends React.Component {
                 </View>
                 <FlatList
                     data={posts}
-                    extraData = {this.state}
+                    extraData={this.state}
                     keyExtractor={(item, index) => index}
                     renderItem={({ item }) => this._membersList(item)}
+                    onRefresh={() => this.getFeed()}
+                    refreshing={isLoading}
                 />
             </ScrollView>
         );

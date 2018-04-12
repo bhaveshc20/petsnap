@@ -7,11 +7,8 @@ export default StackNavigator({
     Profile: {
         screen: ProfileScreen,
     },
-    PostDetail: {
+    Post: {
         screen: PostScreen,
-    },
-    EditProfile: {
-        screen: EditProfileScreen,
     },
 },
 {
