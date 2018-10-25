@@ -4,10 +4,6 @@
 </a>
 </p>
 
-<h3 align="center">
-Petsnap mobile app
-</h3>
-
 <p align="center">
 Petsnap is a social network for pets.
 </p>
@@ -17,9 +13,9 @@ Petsnap is a social network for pets.
 
 **Petsnap is a social network for pets.**
 
-- Your pets can **sign up or login** using their paws.
-- They can **upload selfies** or **post their thoughts** for other pets to see.
-- They can also look at **other pets posts** and either **paw** (like) or just dislike it.
+- You can login and sign up for your pets.
+- You can upload selfies or post their thoughts for other pets to see.
+- You can also look at other pets posts and paw (like) it.
 
 ### Screenshots
 
@@ -39,39 +35,21 @@ Petsnap is a social network for pets.
 </div>
 
 ## Functionality
-- Petsnap is a fully functioning Social Network app
-- Users can Sign up & Log into the app
-- Users can create a new Posts
-- Users can like and comments on Posts
-- Users can follow each other
-
-
-Used React Native Camera library to let the users take pictures while creating posts or upload a new profile picture. Also used React Native Elements library to build UI, React Navigation library to handle navigation, and packages such as react-native-modal and react-native-keyboard-aware-scroll-view to improve UI.
+Petsnap uses React Native Camera library to let the users take pictures while creating posts or upload a new profile picture. It also uses React Native Elements library for the UI, React Navigation library to handle navigation, and packages such as react-native-modal and react-native-keyboard-aware-scroll-view to improve UI.
 
 Would like to implement Redux in the future to better manage the state. Also would like to add themeing to the app to enable light/dark modes, and overall make the app more dynamic and functional.
 
 ## Getting started
 
 ```
-git clone https://github.com/bhaveshc789/daug-mobile.git
+git clone https://github.com/bhaveshc789/petsnap.git
 
 exp start
 
 exp ios
 ```
 
-## Designs
-
-Intro, Login & Sign Up screens are based on **Robinhood App**.
-
-Profile screen is based on **Instagram**.
-
-Social Feed screen is based on **Facebook** and **Instagram**.
-
 ## Milestones
-
-Below you can see my main milestones and how I achieved them
-
 
 ## Milestone #1
 
